@@ -1,0 +1,90 @@
+/* 全局样式 - 清新水墨风 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --ink-dark: #3E2723;
+  --ink-medium: #5D4037;
+  --ink-light: #8B5A2B;
+  --ink-faint: #C4A882;
+  --term-green: #2E8B57;
+  --holiday-red: #C0392B;
+  --bg-primary: #F8F5F0;
+  --bg-card: rgba(255, 255, 255, 0.65);
+  --text-primary: #2c2c2c;
+  --text-secondary: #666;
+  --text-muted: #999;
+  --border-light: rgba(139, 90, 43, 0.08);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Noto Serif SC', 'STSong', 'SimSun', 'PingFang SC', 'Microsoft YaHei', serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* 宣纸纹理背景 */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(139, 90, 43, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(46, 139, 87, 0.02) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(196, 168, 130, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#app {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 90, 43, 0.15);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 90, 43, 0.25);
+}
+
+/* 选中文字样式 */
+::selection {
+  background: rgba(46, 139, 87, 0.15);
+  color: #3E2723;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
