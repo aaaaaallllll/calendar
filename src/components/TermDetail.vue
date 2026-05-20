@@ -182,19 +182,7 @@ function handleEsc(e) {
   position: relative;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
               0 0 0 1px rgba(139, 90, 43, 0.1);
-  animation: modalIn 0.3s ease;
   overflow: hidden;
-}
-
-@keyframes modalIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
 }
 
 /* 节气背景装饰 */

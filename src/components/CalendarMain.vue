@@ -66,8 +66,16 @@
     </div>
 
     <!-- 日历网格 -->
-    <div class="calendar-grid">
-      <CalendarCell
+    <Transition :name="slideAnimation" mode="out-in">
+      <div
+        class="calendar-grid"
+        :key="`${currentYear}-${currentMonth}`"
+        ref="calendarGrid"
+        @touchstart="handleTouchStart"
+        @touchmove="handleTouchMove"
+        @touchend="handleTouchEnd"
+      >
+        <CalendarCell
         v-for="cell in calendarCells"
         :key="`${cell.year}-${cell.month}-${cell.day}`"
         :year="cell.year"
@@ -77,8 +85,10 @@
         :is-today="cell.isToday"
         @click="handleCellClick"
         @show-todo="handleShowTodo"
+        @show-term-animation="handleTermAnimation"
       />
-    </div>
+      </div>
+    </Transition>
 
     <!-- 底部节气信息 -->
     <div class="month-terms">
@@ -125,6 +135,8 @@ import TermDetail from './TermDetail.vue'
 import TodoModal from './TodoModal.vue'
 import { getSolarTermsForMonth } from '../utils/solarTerms.js'
 
+const emit = defineEmits(['showTermAnimation'])
+
 const today = new Date()
 const currentYear = ref(today.getFullYear())
 const currentMonth = ref(today.getMonth() + 1)
@@ -136,6 +148,16 @@ const pickerPage = ref(Math.floor(today.getFullYear() / 12))
 // 待办弹窗状态
 const showTodoModal = ref(false)
 const todoDate = ref({ year: today.getFullYear(), month: today.getMonth() + 1, day: today.getDate() })
+
+// 触摸滑动状态
+const touchStartX = ref(0)
+const touchStartY = ref(0)
+const touchEndX = ref(0)
+const isSwiping = ref(false)
+const swipeThreshold = 50 // 滑动阈值，超过此距离才切换
+
+// 滑动动画方向
+const slideAnimation = ref('slide-left')
 
 const weekdays = ['日', '一', '二', '三', '四', '五', '六']
 
@@ -273,6 +295,63 @@ function handleShowTodoFromDetail({ year, month, day }) {
     todoDate.value = { year, month, day }
     showTodoModal.value = true
   }, 200)
+}
+
+// 显示节气动画
+function handleTermAnimation(termName) {
+  emit('showTermAnimation', termName)
+}
+
+// 触摸事件处理
+function handleTouchStart(e) {
+  touchStartX.value = e.touches[0].clientX
+  touchStartY.value = e.touches[0].clientY
+  isSwiping.value = false
+}
+
+function handleTouchMove(e) {
+  if (!touchStartX.value) return
+  
+  const currentX = e.touches[0].clientX
+  const currentY = e.touches[0].clientY
+  const diffX = touchStartX.value - currentX
+  const diffY = touchStartY.value - currentY
+  
+  // 判断是否为水平滑动（水平移动距离大于垂直移动距离）
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
+    isSwiping.value = true
+    // 阻止默认滚动行为
+    e.preventDefault()
+  }
+  
+  touchEndX.value = currentX
+}
+
+function handleTouchEnd(e) {
+  if (!isSwiping.value) {
+    touchStartX.value = 0
+    touchStartY.value = 0
+    return
+  }
+
+  const diffX = touchStartX.value - touchEndX.value
+
+  // 左滑（diffX > 0）→ 下一个月
+  if (diffX > swipeThreshold) {
+    slideAnimation.value = 'slide-left'
+    nextMonth()
+  }
+  // 右滑（diffX < 0）→ 上一个月
+  else if (diffX < -swipeThreshold) {
+    slideAnimation.value = 'slide-right'
+    prevMonth()
+  }
+
+  // 重置状态
+  touchStartX.value = 0
+  touchStartY.value = 0
+  touchEndX.value = 0
+  isSwiping.value = false
 }
 
 function handleTermClick(term) {
@@ -606,6 +685,36 @@ function closeYearPicker(e) {
 .picker-leave-to {
   opacity: 0;
   transform: translateY(-8px);
+}
+
+/* 月份切换滑动动画 */
+.slide-left-enter-active,
+.slide-left-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 左滑动画：进入从右来，离开往左去 */
+.slide-left-enter-from {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.slide-left-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+/* 右滑动画：进入从左来，离开往右去 */
+.slide-right-enter-from {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.slide-right-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
 }
 
 /* 移动端适配 */

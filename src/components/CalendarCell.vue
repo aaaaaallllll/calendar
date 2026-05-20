@@ -30,7 +30,7 @@ const props = defineProps({
   isToday: { type: Boolean, default: false }
 })
 
-const emit = defineEmits(['click', 'showTodo'])
+const emit = defineEmits(['click', 'showTodo', 'showTermAnimation'])
 
 const solarTerm = computed(() => {
   if (!props.isCurrentMonth) return null
@@ -65,6 +65,7 @@ function handleClick() {
   // 如果有节气或假日，显示详情
   if (solarTerm.value) {
     emit('click', { type: 'term', data: solarTerm.value, year: props.year, month: props.month, day: props.day })
+    emit('showTermAnimation', solarTerm.value.name)
     return
   }
   if (holiday.value) {
