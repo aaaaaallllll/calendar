@@ -14,17 +14,23 @@
         <template v-if="info && info.type === 'term'">
           <div class="modal-header term-header">
             <div class="term-badge">{{ info.data.name }}</div>
-            <div class="term-date">{{ info.year }}年{{ info.month }}月{{ info.day }}日</div>
+            <div class="term-date">
+              {{ info.year }}年{{ info.month }}月{{ info.day }}日
+            </div>
             <div v-if="termBg" class="term-desc">{{ termBg.desc }}</div>
           </div>
 
           <div class="poem-section">
             <div class="poem-title">
               《{{ poemData.title }}》
-              <span class="poem-author">{{ poemData.dynasty }} · {{ poemData.author }}</span>
+              <span class="poem-author"
+                >{{ poemData.dynasty }} · {{ poemData.author }}</span
+              >
             </div>
             <div class="poem-body">
-              <p v-for="(line, i) in poemData.poem.split('\n')" :key="i">{{ line }}</p>
+              <p v-for="(line, i) in poemData.poem.split('\n')" :key="i">
+                {{ line }}
+              </p>
             </div>
             <div class="poem-divider"></div>
             <div class="poem-appreciation">{{ poemData.appreciation }}</div>
@@ -36,7 +42,9 @@
           <div class="modal-header holiday-header">
             <div class="holiday-emoji">{{ info.data.emoji }}</div>
             <div class="holiday-name">{{ info.data.name }}</div>
-            <div class="holiday-date">{{ info.year }}年{{ info.month }}月{{ info.day }}日</div>
+            <div class="holiday-date">
+              {{ info.year }}年{{ info.month }}月{{ info.day }}日
+            </div>
           </div>
 
           <div class="holiday-info">
@@ -59,102 +67,111 @@
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
-import { getPoemForTerm } from '../data/poems.js'
-import { getTermBackground } from '../data/termBackgrounds.js'
+import { computed, watch } from "vue";
+import { getPoemForTerm } from "../data/poems.js";
+import { getTermBackground } from "../data/termBackgrounds.js";
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
-  info: { type: Object, default: null }
-})
+  info: { type: Object, default: null },
+});
 
-const emit = defineEmits(['close', 'showTodo'])
+const emit = defineEmits(["close", "showTodo"]);
 
 const poemData = computed(() => {
-  if (props.info && props.info.type === 'term') {
-    return getPoemForTerm(props.info.data.name) || {
-      title: props.info.data.name,
-      author: '佚名',
-      dynasty: '',
-      poem: '暂无古诗',
-      appreciation: ''
-    }
+  if (props.info && props.info.type === "term") {
+    return (
+      getPoemForTerm(props.info.data.name) || {
+        title: props.info.data.name,
+        author: "佚名",
+        dynasty: "",
+        poem: "暂无古诗",
+        appreciation: "",
+      }
+    );
   }
-  return null
-})
+  return null;
+});
 
 const termBg = computed(() => {
-  if (props.info && props.info.type === 'term') {
-    return getTermBackground(props.info.data.name)
+  if (props.info && props.info.type === "term") {
+    return getTermBackground(props.info.data.name);
   }
-  return null
-})
+  return null;
+});
 
 const contentStyle = computed(() => {
   if (termBg.value) {
     return {
-      background: `linear-gradient(135deg, ${termBg.value.color} 0%, #f5f0e8 100%)`
-    }
+      background: `linear-gradient(135deg, ${termBg.value.color} 0%, #f5f0e8 100%)`,
+    };
   }
   return {
-    background: 'linear-gradient(135deg, #faf8f5 0%, #f5f0e8 100%)'
-  }
-})
+    background: "linear-gradient(135deg, #faf8f5 0%, #f5f0e8 100%)",
+  };
+});
 
 const typeLabel = computed(() => {
   const labels = {
-    public: '法定假日',
-    traditional: '传统节日',
-    partial: '部分公民假日',
-    other: '纪念日'
-  }
-  return labels[props.info?.data?.type] || '节日'
-})
+    public: "法定假日",
+    traditional: "传统节日",
+    partial: "部分公民假日",
+    other: "纪念日",
+  };
+  return labels[props.info?.data?.type] || "节日";
+});
 
 const holidayDesc = computed(() => {
   const descs = {
-    '元旦': '新年的第一天，公历1月1日，标志着新一年的开始。',
-    '劳动节': '国际劳动节，纪念劳动人民的伟大贡献。',
-    '国庆节': '中华人民共和国国庆日，举国同庆。',
-    '妇女节': '国际妇女节，庆祝女性在社会各领域的成就。',
-    '青年节': '纪念五四运动，弘扬青年精神。',
-    '儿童节': '国际儿童节，关爱儿童成长。',
-    '教师节': '感念师恩，尊师重教。',
-    '春节': '中国最重要的传统节日，阖家团圆，辞旧迎新。',
-    '元宵节': '农历正月十五，赏花灯、吃元宵，春节的尾声。',
-    '端午节': '纪念屈原，赛龙舟、吃粽子。',
-    '中秋节': '赏月团圆的日子，吃月饼，共赏明月。',
-    '重阳节': '登高望远、敬老爱老的节日。',
-    '七夕节': '中国情人节，牛郎织女鹊桥相会。',
-    '除夕': '一年的最后一天，全家团聚，守岁迎新。',
-    '腊八节': '农历十二月初八，喝腊八粥，寓意丰收吉祥。',
-    '小年': '祭灶神、扫尘土，为春节做准备。',
-    '龙抬头': '农历二月初二，理发祈福，春耕开始。',
-  }
-  return descs[props.info?.data?.name] || '一个值得纪念的日子。'
-})
+    元旦: "新年的第一天，公历1月1日，标志着新一年的开始。",
+    劳动节: "国际劳动节，纪念劳动人民的伟大贡献。",
+    国庆节: "中华人民共和国国庆日，举国同庆。",
+    妇女节: "国际妇女节，庆祝女性在社会各领域的成就。",
+    青年节: "纪念五四运动，弘扬青年精神。",
+    儿童节: "国际儿童节，关爱儿童成长。",
+    教师节: "感念师恩，尊师重教。",
+    春节: "中国最重要的传统节日，阖家团圆，辞旧迎新。",
+    元宵节: "农历正月十五，赏花灯、吃元宵，春节的尾声。",
+    端午节: "纪念屈原，赛龙舟、吃粽子。",
+    中秋节: "赏月团圆的日子，吃月饼，共赏明月。",
+    重阳节: "登高望远、敬老爱老的节日。",
+    七夕节: "中国情人节，牛郎织女鹊桥相会。",
+    除夕: "一年的最后一天，全家团聚，守岁迎新。",
+    腊八节: "农历十二月初八，喝腊八粥，寓意丰收吉祥。",
+    小年: "祭灶神、扫尘土，为春节做准备。",
+    龙抬头: "农历二月初二，理发祈福，春耕开始。",
+  };
+  return descs[props.info?.data?.name] || "一个值得纪念的日子。";
+});
 
 function close() {
-  emit('close')
+  emit("close");
 }
 
 function openTodo() {
   if (props.info) {
-    emit('showTodo', { year: props.info.year, month: props.info.month, day: props.info.day })
+    emit("showTodo", {
+      year: props.info.year,
+      month: props.info.month,
+      day: props.info.day,
+    });
   }
 }
 
 // ESC关闭
-watch(() => props.visible, (val) => {
-  if (val) {
-    document.addEventListener('keydown', handleEsc)
-  } else {
-    document.removeEventListener('keydown', handleEsc)
-  }
-})
+watch(
+  () => props.visible,
+  (val) => {
+    if (val) {
+      document.addEventListener("keydown", handleEsc);
+    } else {
+      document.removeEventListener("keydown", handleEsc);
+    }
+  },
+);
 
 function handleEsc(e) {
-  if (e.key === 'Escape') close()
+  if (e.key === "Escape") close();
 }
 </script>
 
@@ -180,8 +197,9 @@ function handleEsc(e) {
   max-width: 480px;
   width: 100%;
   position: relative;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
-              0 0 0 1px rgba(139, 90, 43, 0.1);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(139, 90, 43, 0.1);
   animation: modalIn 0.3s ease;
   overflow: hidden;
 }
@@ -335,13 +353,13 @@ function handleEsc(e) {
   background: rgba(139, 90, 43, 0.08);
   border-radius: 50%;
   font-size: 20px;
-  color: #8B5A2B;
+  color: #8b5a2b;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
-  z-index: 1;
+  z-index: 2;
 }
 
 .modal-close:hover {
@@ -360,7 +378,7 @@ function handleEsc(e) {
   display: inline-block;
   font-size: 28px;
   font-weight: 700;
-  color: #2E8B57;
+  color: #2e8b57;
   letter-spacing: 4px;
   margin-bottom: 8px;
 }
@@ -388,7 +406,7 @@ function handleEsc(e) {
 .poem-title {
   font-size: 18px;
   font-weight: 600;
-  color: #5D4037;
+  color: #5d4037;
   margin-bottom: 16px;
 }
 
@@ -406,7 +424,7 @@ function handleEsc(e) {
 
 .poem-body p {
   font-size: 16px;
-  color: #3E2723;
+  color: #3e2723;
   letter-spacing: 1px;
   margin: 0;
 }
@@ -414,7 +432,7 @@ function handleEsc(e) {
 .poem-divider {
   width: 60px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #C4A882, transparent);
+  background: linear-gradient(90deg, transparent, #c4a882, transparent);
   margin: 20px auto;
 }
 
@@ -426,7 +444,7 @@ function handleEsc(e) {
   padding: 12px 16px;
   background: rgba(139, 90, 43, 0.04);
   border-radius: 8px;
-  border-left: 3px solid #C4A882;
+  border-left: 3px solid #c4a882;
 }
 
 /* 节假日头部 */
@@ -445,7 +463,7 @@ function handleEsc(e) {
 .holiday-name {
   font-size: 28px;
   font-weight: 700;
-  color: #C0392B;
+  color: #c0392b;
   letter-spacing: 4px;
   margin-bottom: 8px;
 }
@@ -471,22 +489,22 @@ function handleEsc(e) {
 
 .type-badge.public {
   background: rgba(192, 57, 43, 0.1);
-  color: #C0392B;
+  color: #c0392b;
 }
 
 .type-badge.traditional {
   background: rgba(139, 90, 43, 0.1);
-  color: #8B5A2B;
+  color: #8b5a2b;
 }
 
 .type-badge.partial {
   background: rgba(52, 152, 219, 0.1);
-  color: #2980B9;
+  color: #2980b9;
 }
 
 .type-badge.other {
   background: rgba(149, 165, 166, 0.1);
-  color: #7F8C8D;
+  color: #7f8c8d;
 }
 
 .holiday-desc {
@@ -497,7 +515,7 @@ function handleEsc(e) {
   padding: 12px 16px;
   background: rgba(192, 57, 43, 0.03);
   border-radius: 8px;
-  border-left: 3px solid #E8D5C4;
+  border-left: 3px solid #e8d5c4;
 }
 
 /* 管理待办按钮 */
@@ -509,7 +527,7 @@ function handleEsc(e) {
   border: 1px dashed rgba(139, 90, 43, 0.25);
   border-radius: 10px;
   background: rgba(139, 90, 43, 0.04);
-  color: #8B5A2B;
+  color: #8b5a2b;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
@@ -530,7 +548,9 @@ function handleEsc(e) {
 
 .modal-enter-active .modal-content,
 .modal-leave-active .modal-content {
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
 }
 
 .modal-enter-from,
